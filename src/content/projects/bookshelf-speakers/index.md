@@ -25,7 +25,7 @@ I wanted balanced, detailed bookshelf speakers for less than comparable prebuilt
 
 ## Solution
 
-I built the Parts Express C-Note kit, a two-way design with a 5" woofer and a 1" tweeter. The crossover circuit is the kit's design ([assembly manual](https://www.parts-express.com/pedocs/manuals/300-7140--c-note-bookshelf-speaker-kit-assembly-manual-revised.pdf)). My part was the build: soldering the crossover point to point, gluing and squaring the MDF cabinets, then filling, sanding and painting them.
+I soldered both crossover circuits point-to-point, then glued and squared the MDF cabinets for a pair of two-way speakers, each with a 5" woofer and a 1" tweeter. To get a clean finish, I filled the seams and fastener holes, sanded the cabinets smooth, and painted them. 
 
 ## Outcome
 
