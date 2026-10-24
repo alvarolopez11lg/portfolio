@@ -1,0 +1,196 @@
+---
+// How one project is shown in the content area. Every project uses this,
+// so a change here updates them all.
+import { Image } from 'astro:assets';
+import { render, type CollectionEntry } from 'astro:content';
+
+interface Props {
+  project: CollectionEntry<'projects'>;
+  prev?: { href: string; title: string };
+  next?: { href: string; title: string };
+}
+
+const { project, prev, next } = Astro.props;
+const { title, hook, context, tools, cover, coverAlt, gallery } = project.data;
+const { Content } = await render(project);
+---
+
+<article class="project">
+  <header class="head">
+    <h1>{title}</h1>
+    <p class="hook">{hook}</p>
+    <p class="meta muted">{context}</p>
+    {tools.length > 0 && <p class="meta muted">{tools.join(' · ')}</p>}
+  </header>
+
+  {
+    cover && (
+      <figure class="cover">
+        <Image
+          src={cover}
+          alt={coverAlt ?? title}
+          widths={[480, 760, 1200]}
+          sizes="(max-width: 800px) 100vw, 760px"
+          style={`--maxw: ${Math.round(cover.width * 1.4)}px`}
+        />
+      </figure>
+    )
+  }
+
+  <div class="body">
+    <Content />
+  </div>
+
+  {
+    gallery.length > 0 && (
+      <div class="gallery">
+        {gallery.map((g) => (
+          <figure>
+            <Image
+              src={g.src}
+              alt={g.alt}
+              widths={[360, 720]}
+              sizes="(max-width: 800px) 50vw, 370px"
+              style={`--maxw: ${Math.round(g.src.width * 1.4)}px`}
+            />
+          </figure>
+        ))}
+      </div>
+    )
+  }
+
+  {
+    (prev || next) && (
+      <nav class="pager" aria-label="More projects">
+        {prev ? (
+          <a href={prev.href}>
+            <span class="muted">Previous</span>
+            <br />
+            {prev.title}
+          </a>
+        ) : (
+          <span />
+        )}
+        {next && (
+          <a href={next.href} class="right">
+            <span class="muted">Next</span>
+            <br />
+            {next.title}
+          </a>
+        )}
+      </nav>
+    )
+  }
+</article>
+
+<style>
+  .project {
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+  }
+
+  .head {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  h1 {
+    font-size: 1.4rem;
+    font-weight: 500;
+    line-height: 1.3;
+  }
+
+  .hook {
+    margin-bottom: 8px;
+  }
+
+  .meta {
+    font-size: 0.87rem;
+  }
+
+  figure {
+    margin: 0;
+  }
+
+  .cover {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    aspect-ratio: 4 / 3;
+    max-height: 480px;
+    border: 1px solid var(--rule);
+  }
+
+  /* Images are never enlarged more than 1.4x their real size, so they stay sharp. */
+  .cover :global(img),
+  .gallery :global(img) {
+    width: var(--maxw);
+    max-width: 100%;
+    height: auto;
+    max-height: 100%;
+    object-fit: contain;
+    padding: 16px;
+  }
+
+  .body {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    max-width: 62ch;
+  }
+
+  .body :global(h2) {
+    margin-top: 12px;
+    font-size: 0.8rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  .body :global(p),
+  .body :global(ul) {
+    margin: 0;
+  }
+
+  .body :global(ul) {
+    padding-left: 1.2em;
+  }
+
+  .body :global(li + li) {
+    margin-top: 6px;
+  }
+
+  .gallery {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+  }
+
+  .gallery figure {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    aspect-ratio: 4 / 3;
+    border: 1px solid var(--rule);
+    overflow: hidden;
+  }
+
+
+  .pager {
+    display: flex;
+    justify-content: space-between;
+    gap: 24px;
+    padding-top: 24px;
+    border-top: 1px solid var(--rule);
+  }
+
+  .pager a:hover {
+    color: var(--accent);
+  }
+
+  .right {
+    text-align: right;
+  }
+</style>

@@ -1,0 +1,134 @@
+---
+// The menu in the top-left corner. Projects are listed automatically
+// from src/content/projects, sorted by their `order` field.
+import { getCollection } from 'astro:content';
+
+const path = Astro.url.pathname.replace(/\/$/, '') || '/';
+const isAt = (href: string) => path === href;
+const isIn = (base: string) => path === base || path.startsWith(base + '/');
+
+const all = (await getCollection('projects')).sort((a, b) => a.data.order - b.data.order);
+const completed = all.filter((p) => p.data.status === 'completed');
+const current = all.filter((p) => p.data.status === 'in-progress');
+---
+
+<nav class="menu" aria-label="Main" transition:animate="none">
+  <a href="/" class="name">Alvaro Lopez Guerra</a>
+  <p class="tagline">Mechanical design engineer<br />M.S. Columbia University '27</p>
+
+  <ul class="list">
+    <li>
+      <a class="item" href="/about" aria-current={isAt('/about') ? 'page' : undefined}>About</a>
+    </li>
+    <li>
+      <a class="item" href="/projects" aria-current={isAt('/projects') ? 'page' : undefined}>Projects</a>
+      {
+        isIn('/projects') && (
+          <ul class="list sub">
+            {completed.map((p) => (
+              <li>
+                <a class="item" href={`/projects/${p.id}`} aria-current={isAt(`/projects/${p.id}`) ? 'page' : undefined}>
+                  {p.data.title}
+                </a>
+              </li>
+            ))}
+          </ul>
+        )
+      }
+    </li>
+    <li>
+      <a class="item" href="/current" aria-current={isAt('/current') ? 'page' : undefined}>Current projects</a>
+      {
+        isIn('/current') && (
+          <ul class="list sub">
+            {current.map((p) => (
+              <li>
+                <a class="item" href={`/current/${p.id}`} aria-current={isAt(`/current/${p.id}`) ? 'page' : undefined}>
+                  {p.data.title}
+                </a>
+              </li>
+            ))}
+          </ul>
+        )
+      }
+    </li>
+    <li>
+      <a class="item" href="/resume" aria-current={isAt('/resume') ? 'page' : undefined}>Resume</a>
+    </li>
+    <li>
+      <a class="item" href="/contact" aria-current={isAt('/contact') ? 'page' : undefined}>Contact</a>
+    </li>
+  </ul>
+</nav>
+
+<style>
+  .menu {
+    position: sticky;
+    top: 56px;
+    align-self: start;
+  }
+
+  .name {
+    font-weight: 500;
+  }
+
+  .tagline {
+    margin: 6px 0 48px;
+    color: var(--muted);
+  }
+
+  .list {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .sub {
+    gap: 4px;
+    margin: 8px 0 10px 1.5em;
+  }
+
+  .item {
+    position: relative;
+    display: inline-block;
+    padding: 2px 0;
+    transition: color 0.15s ease;
+  }
+
+  /* The arrow sits in the left margin, so nothing shifts when it appears. */
+  .item::before {
+    content: '→';
+    position: absolute;
+    left: -1.5em;
+    color: var(--accent);
+    opacity: 0;
+    transform: translateX(-4px);
+    transition:
+      opacity 0.15s ease,
+      transform 0.15s ease;
+  }
+
+  .item:hover,
+  .item[aria-current='page'] {
+    color: var(--accent);
+  }
+
+  .item:hover::before,
+  .item[aria-current='page']::before {
+    opacity: 1;
+    transform: translateX(0);
+  }
+
+  @media (max-width: 800px) {
+    .menu {
+      position: static;
+    }
+
+    .tagline {
+      margin-bottom: 28px;
+    }
+  }
+</style>

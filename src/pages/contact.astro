@@ -1,0 +1,39 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout title="Contact">
+  <dl class="rows">
+    <dt>Email</dt>
+    <dd><a href="mailto:al5072@columbia.edu">al5072@columbia.edu</a></dd>
+    <dt>LinkedIn</dt>
+    <dd><a href="https://www.linkedin.com/in/alvarolopezg/" rel="noopener">linkedin.com/in/alvarolopezg</a></dd>
+    <dt>Based in</dt>
+    <dd>New York, NY</dd>
+  </dl>
+</Layout>
+
+<style>
+  .rows {
+    display: grid;
+    grid-template-columns: 6.5em minmax(0, 1fr);
+    row-gap: 10px;
+    margin: 0;
+  }
+
+  .rows dt {
+    color: var(--muted);
+  }
+
+  .rows dd {
+    margin: 0;
+  }
+
+  .rows a {
+    border-bottom: 1px solid currentColor;
+  }
+
+  .rows a:hover {
+    color: var(--accent);
+  }
+</style>

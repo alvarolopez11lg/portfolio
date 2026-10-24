@@ -1,0 +1,89 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout title="About">
+  <div class="stack">
+    <section class="text">
+      <p>
+        I'm a mechanical engineer who likes owning a part from the first sketch to the finished piece. I design in
+        SolidWorks, then build: waterjet cutting, press brake forming, 3D printing and assembly.
+      </p>
+      <p>
+        I'm pursuing an M.S. in Mechanical Engineering at Columbia University, focused on design for manufacturing.
+        Before Columbia, I earned my B.S. at NYU, passed the FE exam, and spent two years as a project engineer on
+        building restoration projects in New York. This past summer I interned at EngiWorks in Puerto Rico, designing
+        sheet metal parts for clients and reverse engineering production-line components.
+      </p>
+      <p>I'm looking for a Summer 2027 internship in mechanical or product design.</p>
+    </section>
+
+    <section>
+      <h2 class="label">Experience</h2>
+      <dl class="rows">
+        <dt>2026</dt>
+        <dd>EngiWorks<br /><span class="muted">Mechanical Engineer Intern · Caguas, PR</span></dd>
+        <dt>2024–26</dt>
+        <dd>Structural Preservation Systems<br /><span class="muted">Project Engineer · New York, NY</span></dd>
+        <dt>2023</dt>
+        <dd>Collins Aerospace<br /><span class="muted">Project Engineer Intern · Aguadilla, PR</span></dd>
+      </dl>
+    </section>
+
+    <section>
+      <h2 class="label">Education</h2>
+      <dl class="rows">
+        <dt>2026–27</dt>
+        <dd>Columbia University<br /><span class="muted">M.S. Mechanical Engineering</span></dd>
+        <dt>2020–24</dt>
+        <dd>New York University, Tandon<br /><span class="muted">B.S. Mechanical Engineering · FE exam passed 2025</span></dd>
+      </dl>
+    </section>
+
+    <section>
+      <h2 class="label">Tools</h2>
+      <p class="text">
+        SolidWorks (parts, sheet metal, assemblies, drawings), ANSYS, FEA, 3D printing, CNC waterjet, CNC router,
+        laser cutting, sheet metal forming, Arduino, Python.
+      </p>
+    </section>
+  </div>
+</Layout>
+
+<style>
+  .stack {
+    display: flex;
+    flex-direction: column;
+    gap: 40px;
+  }
+
+  .text {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    max-width: 62ch;
+  }
+
+  .label {
+    margin-bottom: 14px;
+    font-size: 0.8rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  .rows {
+    display: grid;
+    grid-template-columns: 6.5em minmax(0, 1fr);
+    row-gap: 14px;
+    margin: 0;
+  }
+
+  .rows dt {
+    color: var(--muted);
+  }
+
+  .rows dd {
+    margin: 0;
+  }
+</style>

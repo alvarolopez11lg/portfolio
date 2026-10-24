@@ -1,0 +1,15 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import ProjectView from '../../components/ProjectView.astro';
+import { projectPaths } from '../../lib/projects';
+
+export async function getStaticPaths() {
+  return projectPaths('in-progress', '/current');
+}
+
+const { project, prev, next } = Astro.props;
+---
+
+<Layout title={project.data.title} description={project.data.hook}>
+  <ProjectView project={project} prev={prev} next={next} />
+</Layout>

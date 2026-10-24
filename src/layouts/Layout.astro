@@ -1,0 +1,39 @@
+---
+// The frame every page sits in: the menu on the left, the content on the right.
+import { ClientRouter } from 'astro:transitions';
+import '@fontsource/ibm-plex-mono/400.css';
+import '@fontsource/ibm-plex-mono/500.css';
+import '../styles/global.css';
+import Menu from '../components/Menu.astro';
+
+interface Props {
+  title?: string;
+  description?: string;
+}
+
+const {
+  title,
+  description = 'Alvaro Lopez Guerra, mechanical design engineer. Projects, resume and contact.',
+} = Astro.props;
+const fullTitle = title ? `${title} · Alvaro Lopez Guerra` : 'Alvaro Lopez Guerra · Mechanical Design Engineer';
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{fullTitle}</title>
+    <meta name="description" content={description} />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <ClientRouter />
+  </head>
+  <body>
+    <div class="site">
+      <Menu />
+      <main class="pane" transition:animate="fade">
+        <slot />
+      </main>
+    </div>
+  </body>
+</html>
