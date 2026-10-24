@@ -1,13 +1,8 @@
 ---
 import Layout from '../../layouts/Layout.astro';
+import Previews from '../../components/Previews.astro';
 ---
 
 <Layout title="Current projects">
-  <p class="muted hint">Work in progress. Select a project.</p>
+  <Previews status="in-progress" hint="Work in progress. Select a project." />
 </Layout>
-
-<style>
-  .hint {
-    padding-top: 2px;
-  }
-</style>

@@ -1,9 +1,9 @@
 ---
 title: Storage Case
 hook: Spool and tool storage framed in aluminum extrusion.
-status: completed
-order: 5
-context: EngiWorks · Summer 2026
+status: part
+order: 3
+context: Client design
 tools: [SolidWorks, Aluminum extrusion]
 cover: ./images/case-black.png
 coverAlt: Render of the storage case with a black extrusion frame and glass doors.

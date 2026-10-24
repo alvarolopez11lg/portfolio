@@ -10,9 +10,12 @@ const isIn = (base: string) => path === base || path.startsWith(base + '/');
 const all = (await getCollection('projects')).sort((a, b) => a.data.order - b.data.order);
 const completed = all.filter((p) => p.data.status === 'completed');
 const current = all.filter((p) => p.data.status === 'in-progress');
+
+// On a single project page, phones hide the project list so the content comes first.
+const onDetail = /^\/(projects|current)\/[^/]+$/.test(path);
 ---
 
-<nav class="menu" aria-label="Main" transition:animate="none">
+<nav class="menu" aria-label="Main" data-detail={onDetail ? '' : undefined} transition:animate="none">
   <a href="/" class="name">Alvaro Lopez Guerra</a>
   <p class="tagline">Mechanical design engineer<br />M.S. Columbia University '27</p>
 
@@ -21,13 +24,13 @@ const current = all.filter((p) => p.data.status === 'in-progress');
       <a class="item" href="/about" aria-current={isAt('/about') ? 'page' : undefined}>About</a>
     </li>
     <li>
-      <a class="item" href="/projects" aria-current={isAt('/projects') ? 'page' : undefined}>Projects</a>
+      <a class:list={['item', { open: isIn('/projects') }]} href="/projects" aria-current={isAt('/projects') ? 'page' : undefined}>Projects</a>
       {
         isIn('/projects') && (
           <ul class="list sub">
             {completed.map((p) => (
               <li>
-                <a class="item" href={`/projects/${p.id}`} aria-current={isAt(`/projects/${p.id}`) ? 'page' : undefined}>
+                <a class="item" data-id={p.id} href={`/projects/${p.id}`} aria-current={isAt(`/projects/${p.id}`) ? 'page' : undefined}>
                   {p.data.title}
                 </a>
               </li>
@@ -37,13 +40,13 @@ const current = all.filter((p) => p.data.status === 'in-progress');
       }
     </li>
     <li>
-      <a class="item" href="/current" aria-current={isAt('/current') ? 'page' : undefined}>Current projects</a>
+      <a class:list={['item', { open: isIn('/current') }]} href="/current" aria-current={isAt('/current') ? 'page' : undefined}>Current projects</a>
       {
         isIn('/current') && (
           <ul class="list sub">
             {current.map((p) => (
               <li>
-                <a class="item" href={`/current/${p.id}`} aria-current={isAt(`/current/${p.id}`) ? 'page' : undefined}>
+                <a class="item" data-id={p.id} href={`/current/${p.id}`} aria-current={isAt(`/current/${p.id}`) ? 'page' : undefined}>
                   {p.data.title}
                 </a>
               </li>
@@ -129,6 +132,20 @@ const current = all.filter((p) => p.data.status === 'in-progress');
 
     .tagline {
       margin-bottom: 28px;
+    }
+
+    .menu[data-detail] .sub {
+      display: none;
+    }
+
+    /* The list is hidden, so mark the section you're in instead. */
+    .menu[data-detail] .open {
+      color: var(--accent);
+    }
+
+    .menu[data-detail] .open::before {
+      opacity: 1;
+      transform: translateX(0);
     }
   }
 </style>

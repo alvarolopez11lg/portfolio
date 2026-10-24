@@ -1,9 +1,9 @@
 ---
 title: Generator Air Filter
 hook: A housing built around how it gets serviced.
-status: completed
-order: 3
-context: EngiWorks · Summer 2026
+status: part
+order: 1
+context: Client retrofit
 tools: [SolidWorks Sheet Metal, McMaster-Carr hardware]
 cover: ./images/filter-open.png
 coverAlt: The air filter housing with both hinged frames swung open.

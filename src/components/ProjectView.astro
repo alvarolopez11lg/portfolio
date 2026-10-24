@@ -1,23 +1,27 @@
 ---
 // How one project is shown in the content area. Every project uses this,
-// so a change here updates them all.
+// so a change here updates them all. A group page (like EngiWorks) shows
+// its intro, then each member project nested underneath.
 import { Image } from 'astro:assets';
-import { render, type CollectionEntry } from 'astro:content';
+import { getEntry, render, type CollectionEntry } from 'astro:content';
 
 interface Props {
   project: CollectionEntry<'projects'>;
+  nested?: boolean;
   prev?: { href: string; title: string };
   next?: { href: string; title: string };
 }
 
-const { project, prev, next } = Astro.props;
-const { title, hook, context, tools, cover, coverAlt, gallery } = project.data;
+const { project, nested = false, prev, next } = Astro.props;
+const { title, hook, context, tools, cover, coverAlt, gallery, members } = project.data;
 const { Content } = await render(project);
+const parts = (await Promise.all(members.map((m) => getEntry(m)))).filter((p) => p !== undefined);
+const Heading = nested ? 'h2' : 'h1';
 ---
 
-<article class="project">
+<article class:list={['project', { nested }]} id={nested ? project.id : undefined}>
   <header class="head">
-    <h1>{title}</h1>
+    <Heading class="title">{title}</Heading>
     <p class="hook">{hook}</p>
     <p class="meta muted">{context}</p>
     {tools.length > 0 && <p class="meta muted">{tools.join(' · ')}</p>}
@@ -45,14 +49,29 @@ const { Content } = await render(project);
     gallery.length > 0 && (
       <div class="gallery">
         {gallery.map((g) => (
-          <figure>
-            <Image
-              src={g.src}
-              alt={g.alt}
-              widths={[360, 720]}
-              sizes="(max-width: 800px) 50vw, 370px"
-              style={`--maxw: ${Math.round(g.src.width * 1.4)}px`}
-            />
+          <figure class:list={[{ wide: g.wide }]}>
+            <div class="frame">
+              <Image
+                src={g.src}
+                alt={g.alt}
+                widths={g.wide ? [760, 1200] : [360, 720]}
+                sizes={g.wide ? '(max-width: 800px) 100vw, 760px' : '(max-width: 800px) 50vw, 370px'}
+                style={`--maxw: ${Math.round(g.src.width * 1.4)}px`}
+              />
+            </div>
+            {g.caption && (
+              <figcaption class="muted">
+                {g.caption}
+                {g.link && (
+                  <>
+                    {' '}
+                    <a href={g.link} rel="noopener">
+                      Source ↗
+                    </a>
+                  </>
+                )}
+              </figcaption>
+            )}
           </figure>
         ))}
       </div>
@@ -60,7 +79,17 @@ const { Content } = await render(project);
   }
 
   {
-    (prev || next) && (
+    parts.length > 0 && (
+      <div class="parts">
+        {parts.map((part) => (
+          <Astro.self project={part} nested />
+        ))}
+      </div>
+    )
+  }
+
+  {
+    !nested && (prev || next) && (
       <nav class="pager" aria-label="More projects">
         {prev ? (
           <a href={prev.href}>
@@ -90,16 +119,26 @@ const { Content } = await render(project);
     gap: 32px;
   }
 
+  .nested {
+    padding-top: 40px;
+    border-top: 1px solid var(--rule);
+    scroll-margin-top: 24px;
+  }
+
   .head {
     display: flex;
     flex-direction: column;
     gap: 4px;
   }
 
-  h1 {
+  .title {
     font-size: 1.4rem;
     font-weight: 500;
     line-height: 1.3;
+  }
+
+  .nested .title {
+    font-size: 1.15rem;
   }
 
   .hook {
@@ -114,18 +153,23 @@ const { Content } = await render(project);
     margin: 0;
   }
 
-  .cover {
+  .cover,
+  .frame {
     display: flex;
     justify-content: center;
     align-items: center;
     aspect-ratio: 4 / 3;
-    max-height: 480px;
     border: 1px solid var(--rule);
+    overflow: hidden;
+  }
+
+  .cover {
+    max-height: 480px;
   }
 
   /* Images are never enlarged more than 1.4x their real size, so they stay sharp. */
   .cover :global(img),
-  .gallery :global(img) {
+  .frame :global(img) {
     width: var(--maxw);
     max-width: 100%;
     height: auto;
@@ -162,21 +206,40 @@ const { Content } = await render(project);
     margin-top: 6px;
   }
 
+  .body :global(a),
+  figcaption a {
+    border-bottom: 1px solid currentColor;
+  }
+
+  .body :global(a:hover),
+  figcaption a:hover {
+    color: var(--accent);
+  }
+
   .gallery {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 16px;
   }
 
-  .gallery figure {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    aspect-ratio: 4 / 3;
-    border: 1px solid var(--rule);
-    overflow: hidden;
+  .gallery .wide {
+    grid-column: 1 / -1;
   }
 
+  .gallery .wide .frame {
+    aspect-ratio: auto;
+  }
+
+  figcaption {
+    margin-top: 8px;
+    font-size: 0.87rem;
+  }
+
+  .parts {
+    display: flex;
+    flex-direction: column;
+    gap: 40px;
+  }
 
   .pager {
     display: flex;

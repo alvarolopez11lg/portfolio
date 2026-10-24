@@ -1,9 +1,9 @@
 ---
 title: Junction Box
 hook: Fewer bends, less welding, delivered on time.
-status: completed
-order: 4
-context: EngiWorks · Summer 2026
+status: part
+order: 2
+context: Client order
 tools: [SolidWorks Sheet Metal, Stainless steel, Press brake]
 cover: ./images/jbox-exploded.png
 coverAlt: Exploded view of the junction box's bend-formed panels.

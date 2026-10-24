@@ -1,0 +1,133 @@
+---
+// On the Projects and Current projects pages: hovering a project name in the menu
+// shows its photo and one-line description here. Phones skip this (no hover).
+import { Image } from 'astro:assets';
+import { getEntry } from 'astro:content';
+import { getProjects } from '../lib/projects';
+
+interface Props {
+  status: 'completed' | 'in-progress';
+  hint: string;
+}
+
+const { status, hint } = Astro.props;
+const list = await getProjects(status);
+
+// A group page has no cover of its own, so it borrows its first member's.
+const items = await Promise.all(
+  list.map(async (p) => {
+    let cover = p.data.cover;
+    let alt = p.data.coverAlt ?? p.data.title;
+    if (!cover && p.data.members.length > 0) {
+      const first = await getEntry(p.data.members[0]);
+      cover = first?.data.cover;
+      alt = first?.data.coverAlt ?? alt;
+    }
+    return { id: p.id, hook: p.data.hook, context: p.data.context, cover, alt };
+  }),
+);
+---
+
+<div class="previews">
+  <p class="hint muted">{hint}</p>
+  {
+    items.map((it) => (
+      <figure class="preview" data-preview={it.id} aria-hidden="true">
+        {it.cover && (
+          <div class="frame">
+            <Image src={it.cover} alt="" widths={[480, 760]} sizes="560px" loading="eager" style={`--maxw: ${Math.round(it.cover.width * 1.4)}px`} />
+          </div>
+        )}
+        <figcaption>
+          {it.hook}
+          <br />
+          <span class="muted">{it.context}</span>
+        </figcaption>
+      </figure>
+    ))
+  }
+</div>
+
+<script>
+  function setup() {
+    const box = document.querySelector<HTMLElement>('.previews');
+    if (!box) return;
+    const show = (id: string | null) => {
+      box.querySelectorAll<HTMLElement>('[data-preview]').forEach((el) => {
+        el.classList.toggle('on', el.dataset.preview === id);
+      });
+      box.classList.toggle('showing', id !== null);
+    };
+    document.querySelectorAll<HTMLAnchorElement>('.menu a[data-id]').forEach((a) => {
+      a.addEventListener('mouseenter', () => show(a.dataset.id ?? null));
+      a.addEventListener('focus', () => show(a.dataset.id ?? null));
+      a.addEventListener('mouseleave', () => show(null));
+      a.addEventListener('blur', () => show(null));
+    });
+  }
+  document.addEventListener('astro:page-load', setup);
+</script>
+
+<style>
+  .previews {
+    display: grid;
+  }
+
+  .hint,
+  .preview {
+    grid-area: 1 / 1;
+  }
+
+  .hint {
+    padding-top: 2px;
+    transition: opacity 0.15s ease;
+  }
+
+  .showing .hint {
+    opacity: 0;
+  }
+
+  .preview {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    max-width: 560px;
+    margin: 0;
+    opacity: 0;
+    transform: translateY(4px);
+    transition:
+      opacity 0.18s ease,
+      transform 0.18s ease;
+    pointer-events: none;
+  }
+
+  .preview.on {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .frame {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    aspect-ratio: 4 / 3;
+    border: 1px solid var(--rule);
+    overflow: hidden;
+  }
+
+  .frame :global(img) {
+    width: var(--maxw);
+    max-width: 100%;
+    height: auto;
+    max-height: 100%;
+    object-fit: contain;
+    padding: 16px;
+  }
+
+  /* Phones and touch screens: no hover, and the list is right above. */
+  @media (max-width: 800px), (hover: none) {
+    .previews {
+      display: none;
+    }
+  }
+</style>
