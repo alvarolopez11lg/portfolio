@@ -1,7 +1,9 @@
 // @ts-check
 import { defineConfig } from 'astro/config';
+import sitemap from '@astrojs/sitemap';
 
-// When the domain is bought, set `site` to it (used for share previews and the sitemap).
 export default defineConfig({
-  // site: 'https://alvarolopezguerra.com',
+  // The site's address. Used for link previews, the canonical address and the sitemap.
+  site: 'https://alvarolopezguerra.com',
+  integrations: [sitemap()],
 });

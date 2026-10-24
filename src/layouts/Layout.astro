@@ -16,6 +16,10 @@ const {
   description = 'Alvaro Lopez Guerra, mechanical design engineer. Projects, resume and contact.',
 } = Astro.props;
 const fullTitle = title ? `${title} · Alvaro Lopez Guerra` : 'Alvaro Lopez Guerra · Mechanical Design Engineer';
+// The one official address for this page (so www and non-www count as the same page).
+const canonical = new URL(Astro.url.pathname, Astro.site);
+// The picture shown when the link is shared on LinkedIn, iMessage, etc.
+const shareImage = new URL('/og-image.png', Astro.site);
 ---
 
 <!doctype html>
@@ -25,6 +29,18 @@ const fullTitle = title ? `${title} · Alvaro Lopez Guerra` : 'Alvaro Lopez Guer
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{fullTitle}</title>
     <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    <link rel="sitemap" href="/sitemap-index.xml" />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Alvaro Lopez Guerra" />
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={shareImage} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="Alvaro Lopez Guerra, mechanical design engineer" />
+    <meta name="twitter:card" content="summary_large_image" />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <ClientRouter />
   </head>
