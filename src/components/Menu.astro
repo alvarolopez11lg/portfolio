@@ -40,22 +40,6 @@ const onDetail = /^\/(projects|current)\/[^/]+$/.test(path);
       }
     </li>
     <li>
-      <a class:list={['item', { open: isIn('/current') }]} href="/current" aria-current={isAt('/current') ? 'page' : undefined}>Current projects</a>
-      {
-        isIn('/current') && (
-          <ul class="list sub">
-            {current.map((p) => (
-              <li>
-                <a class="item" data-id={p.id} href={`/current/${p.id}`} aria-current={isAt(`/current/${p.id}`) ? 'page' : undefined}>
-                  {p.data.title}
-                </a>
-              </li>
-            ))}
-          </ul>
-        )
-      }
-    </li>
-    <li>
       <a class="item" href="/resume" aria-current={isAt('/resume') ? 'page' : undefined}>Resume</a>
     </li>
     <li>
