@@ -31,18 +31,14 @@ import cadAssembly from './images/cad-assembly.png';
 
 ## What is ECM?
 
-Electrochemical machining (ECM) is a non-traditional process that removes metal by controlled anodic dissolution rather than by mechanical cutting. The workpiece is connected as the anode (+) and a shaped tool electrode as the cathode (−). A low-voltage, high-current DC supply drives current across a narrow gap filled with a flowing electrolytic solution, and the geometry of the tool is progressively reproduced in the workpiece.
-
-The electrolytic solution is the medium in which the process takes place, not only a coolant. In a sodium chloride (NaCl) solution, dissociated ions carry the current across the gap. At the anode, metal atoms release electrons and enter the solution as ions. At the cathode, water is reduced and hydrogen gas is released, so the tool itself is not consumed. The dissolved metal then combines with hydroxide ions to form an insoluble hydroxide sludge, which the electrolyte flow removes from the gap together with the gas and heat. For an aluminum workpiece:
+Electrochemical machining (ECM) is a non-traditional process that removes metal by controlled anodic dissolution rather than by mechanical cutting. The workpiece is the anode (+) and a shaped tool electrode is the cathode (−), separated by a narrow gap through which an electrolytic solution flows. The solution carries the current across the gap: metal at the anode dissolves into ions, while water is reduced to hydrogen at the cathode, so the tool is not consumed. The flow also removes the resulting hydroxide sludge, gas and heat. For an aluminum workpiece:
 
 <Equation
   label="Electrode reactions (aluminum workpiece, NaCl electrolyte)"
   tex={String.raw`\begin{aligned} \text{Anode:}\quad & \mathrm{Al} \rightarrow \mathrm{Al^{3+}} + 3e^- \\ \text{Cathode:}\quad & \mathrm{2H_2O} + 2e^- \rightarrow \mathrm{H_2} + \mathrm{2OH^-} \\ \text{In solution:}\quad & \mathrm{Al^{3+}} + \mathrm{3OH^-} \rightarrow \mathrm{Al(OH)_3} \end{aligned}`}
 />
 
-Because metal is removed atom by atom, the removal rate is governed by the electrical charge passed (Faraday's law), not by the hardness, strength or toughness of the material. Typical operating conditions are 8 to 30 V, current densities of 10 to 100 A/cm², a machining gap of about 0.1 mm and tool feed rates of 0.1 to 20 mm/min. Since there is no contact and no cutting force, the machined surface is free of burrs, residual stress and heat-affected zones. This makes ECM well suited to difficult-to-machine alloys such as titanium, nickel superalloys and tungsten carbide.
-
-Industrial applications include turbine and compressor blades, die sinking, deburring of gears and fuel-system components, electrochemical broaching, and drilling of complex or offset holes. The principal limitations are the difficulty of holding tight tolerances, the corrosive electrolyte, sludge disposal and a high specific energy of 200 to 600 J/mm³.
+Because the removal rate is governed by the electrical charge passed (Faraday's law), it is independent of the hardness, strength and toughness of the material, and the absence of contact leaves no burrs, residual stress or heat-affected zone. Industrial applications include turbine and compressor blades, die sinking, deburring of gears and fuel-system components, electrochemical broaching, and drilling of complex or offset holes.
 
 ## Goal
 
