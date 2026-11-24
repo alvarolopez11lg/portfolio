@@ -1,0 +1,79 @@
+---
+title: ECM Drilling Machine
+hook: Drilling holes in aluminum with electrochemistry instead of a cutting tool.
+status: in-progress
+order: 0
+note: In progress. The machine is assembled. Wet-run testing starts Monday, November 30, with a flow check first and then voltage raised in steps on aluminum coupons.
+context: Columbia University, Advanced Manufacturing (MECE E4610) · Fall 2026
+tools: [Fusion 360, ESP32, NEMA 17 stepper, 3D printing]
+cover: ./images/machine-top.jpg
+coverAlt: Top view of the assembled machine inside a 5-gallon bucket, with the Z axis, slotted platform, exhaust fan, tubing and flow-control valve.
+gallery:
+  - src: ./images/cad-assembly.png
+    alt: Fusion 360 assembly of the base plate, Z-axis mount, tool holder, slotted workpiece platform and nozzle.
+    caption: Fusion 360 assembly of the platform, Z-axis mount, tool and nozzle.
+  - src: ./images/early-build.jpg
+    alt: Early build inside the bucket, with the Z axis, copper tool and aluminum coupon on the platform.
+    caption: Early build in the bucket.
+  - src: ./images/nozzle-final-section.png
+    alt: Section view of the final nozzle, with a barbed inlet and a converging outlet.
+    caption: Final nozzle, section view. Iterated to give a smooth, consistent flow of electrolytic solution into the tool and workpiece gap without excessive splashing.
+  - src: ./images/nozzle-early-section.png
+    alt: Section view of the earlier flat slit nozzle with two mounting ears.
+    caption: Earlier flat slit nozzle, section view.
+---
+
+import Equation from '../../../components/Equation.astro';
+import Diagram from '../../../components/Diagram.astro';
+import blockDiagram from './images/block-diagram.png';
+import fluidicDiagram from './images/fluidic-diagram.png';
+
+## What is ECM?
+
+Electrochemical machining (ECM) removes metal by dissolving it instead of cutting it. The part is the anode, the shaped tool is the cathode, and an electrolytic solution flows through the small gap between them. The solution carries the current that drives the dissolution, so its composition, concentration and flow control how fast and how evenly the metal dissolves. It also flushes away the dissolved metal, gas and heat.
+
+The tool never touches the part, so it doesn't wear, and the result has no burrs or heat damage no matter how hard the metal is. Industry uses ECM for jet engine turbine blades and cooling holes, fuel injector parts, medical implants and deburring.
+
+## Goal
+
+Design and build a single-axis electrochemical machine that drills holes in aluminum: a 1/8" hole through 1/8" aluminum 6061, built safely around the electrolytic solution, hydrogen gas and a DC power supply. We're a team of three, and I lead the mechanical design.
+
+## Solution
+
+- **Structure:** a 5-gallon bucket is the frame, reservoir and splash enclosure. 3D-printed brackets hold the Z axis and a slotted workpiece platform.
+- **Motion:** an aluminum Z-axis kit with a NEMA 17 stepper and a 4 mm lead screw, homed on limit switches. An ESP32 drives a constant, adjustable feed.
+- **Tool:** a 1/8" copper tube electrode, insulated with heat shrink so only the tip cuts.
+- **Electrolyte:** a 12 V submersible pump pushes the electrolytic solution through a flow-control valve to a 3D-printed nozzle fixed at the workpiece. The solution drains through the platform back into the reservoir.
+- **Safety:** an E-stop cuts mains power to both supplies, every 12 V branch is fused, and a 12 V fan vents hydrogen from under the lid.
+
+## Sizing
+
+<Equation
+  label="Material removal rate per amp (Faraday's law, Al 6061)"
+  tex={String.raw`\begin{aligned} K_v &= \frac{A}{n\,F\,\rho} \\ &= \frac{26.98}{3 \times 96{,}485 \times 0.0027} \approx 2.07\ \frac{\text{mm}^3}{\text{A}\cdot\text{min}} \end{aligned}`}
+  where="A = atomic mass (g/mol), n = valence, F = Faraday constant (C/mol), ρ = density (g/mm³)"
+/>
+
+<Equation
+  label="Cutting current (34 mm³ hole in 10 min at 60% efficiency)"
+  tex={String.raw`\begin{aligned} I &= \frac{V/t}{\eta\,K_v} \\ &= \frac{34/10}{0.6 \times 2.07} \approx 2.7\ \text{A} \end{aligned}`}
+  where="V = volume removed, t = cut time, η = current efficiency"
+/>
+
+That sets the first wet runs at 8 to 12 V with a 3.5 A current limit, an over-current trip at about 1.5 times the cutting current, and a 6 A inline fuse, all on a 0 to 30 V, 10 A bench supply. The pump needs about 1 L/min against roughly 0.34 m of head (about 3.6 kPa). Its maximum pressure of 52 kPa is well under the tubing's 35 psi rating.
+
+## Diagrams
+
+<Diagram
+  src={blockDiagram}
+  full="/projects/ecm-drilling-machine/block-diagram.png"
+  alt="System block diagram showing safety and interlocks, power distribution, control and sensing, electrolyte and fluid, and mechanical and motion subsystems with the connections between them."
+  caption="System block diagram (Week 2 design review)."
+/>
+
+<Diagram
+  src={fluidicDiagram}
+  full="/projects/ecm-drilling-machine/fluidic-diagram.png"
+  alt="Fluidic diagram (P&ID) of the bucket: pump, flow-control valve, nozzle, tool, coupon, slotted platform, return filter, reservoir, vents and exhaust fan, with operating condition tables."
+  caption="Fluidic diagram, P&ID (Week 2 design review). The nozzle shown is the earlier flat slit design."
+/>

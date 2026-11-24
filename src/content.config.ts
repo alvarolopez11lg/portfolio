@@ -5,9 +5,9 @@ import { glob } from 'astro/loaders';
 import { z } from 'astro/zod';
 
 const projects = defineCollection({
-  // One folder per project: src/content/projects/<folder>/index.md
+  // One folder per project: src/content/projects/<folder>/index.md (or index.mdx for pages with equations or diagrams)
   loader: glob({
-    pattern: '*/index.md',
+    pattern: '*/index.{md,mdx}',
     base: './src/content/projects',
     generateId: ({ entry }) => entry.split('/')[0],
   }),
@@ -17,9 +17,13 @@ const projects = defineCollection({
       // One short line shown under the title.
       hook: z.string(),
       // completed   -> listed under Projects
-      // in-progress -> listed under Current projects
+      // in-progress -> listed under Projects with an "in progress" tag
       // part        -> not listed on its own; shown inside a group (see `members`)
       status: z.enum(['completed', 'in-progress', 'part']),
+      // true keeps a project off the site until it's ready.
+      hidden: z.boolean().default(false),
+      // Optional short note shown in a box at the top of the page.
+      note: z.string().optional(),
       // Lower numbers are listed first.
       order: z.number(),
       // Where and when, e.g. "Independent project · Summer 2024".

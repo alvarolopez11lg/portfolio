@@ -4,7 +4,7 @@ import ProjectView from '../../components/ProjectView.astro';
 import { projectPaths } from '../../lib/projects';
 
 export async function getStaticPaths() {
-  return projectPaths('completed', '/projects');
+  return projectPaths('/projects');
 }
 
 const { project, prev, next } = Astro.props;

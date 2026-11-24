@@ -3,15 +3,14 @@
 // shows its photo and one-line description here. Phones skip this (no hover).
 import { Image } from 'astro:assets';
 import { getEntry } from 'astro:content';
-import { getProjects } from '../lib/projects';
+import { getListed } from '../lib/projects';
 
 interface Props {
-  status: 'completed' | 'in-progress';
   hint: string;
 }
 
-const { status, hint } = Astro.props;
-const list = await getProjects(status);
+const { hint } = Astro.props;
+const list = await getListed();
 
 // A group page has no cover of its own, so it borrows its first member's.
 const items = await Promise.all(

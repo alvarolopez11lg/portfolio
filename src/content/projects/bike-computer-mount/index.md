@@ -3,6 +3,7 @@ title: Bike Computer Mount
 hook: Machined aluminum computer mount for 25.4 mm handlebars.
 status: in-progress
 order: 2
+hidden: true
 context: Independent project · 2026
 tools: [CAD, CNC machining]
 ---

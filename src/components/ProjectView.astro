@@ -13,7 +13,7 @@ interface Props {
 }
 
 const { project, nested = false, prev, next } = Astro.props;
-const { title, hook, context, tools, cover, coverAlt, gallery, members } = project.data;
+const { title, hook, context, tools, cover, coverAlt, gallery, members, status, note } = project.data;
 const { Content } = await render(project);
 const parts = (await Promise.all(members.map((m) => getEntry(m)))).filter((p) => p !== undefined);
 const Heading = nested ? 'h2' : 'h1';
@@ -21,11 +21,16 @@ const Heading = nested ? 'h2' : 'h1';
 
 <article class:list={['project', { nested }]} id={nested ? project.id : undefined}>
   <header class="head">
-    <Heading class="title">{title}</Heading>
+    <Heading class="title">
+      {title}
+      {status === 'in-progress' && <span class="tag">in progress</span>}
+    </Heading>
     <p class="hook">{hook}</p>
     <p class="meta muted">{context}</p>
     {tools.length > 0 && <p class="meta muted">{tools.join(' · ')}</p>}
   </header>
+
+  {note && <p class="note">{note}</p>}
 
   {
     cover && (
@@ -139,6 +144,24 @@ const Heading = nested ? 'h2' : 'h1';
 
   .nested .title {
     font-size: 1.15rem;
+  }
+
+  .tag {
+    margin-left: 0.8em;
+    padding: 1px 8px;
+    border: 1px solid var(--accent);
+    font-size: 0.75rem;
+    font-weight: 400;
+    letter-spacing: 0.04em;
+    color: var(--accent);
+    vertical-align: middle;
+    white-space: nowrap;
+  }
+
+  .note {
+    padding: 12px 16px;
+    border: 1px solid var(--accent);
+    font-size: 0.93rem;
   }
 
   .hook {

@@ -1,13 +1,17 @@
 // Helpers for listing projects in order.
 import { getCollection } from 'astro:content';
 
-export async function getProjects(status: 'completed' | 'in-progress') {
-  const all = await getCollection('projects', (p) => p.data.status === status);
+// Everything shown under Projects: finished and in-progress projects, unless hidden.
+export async function getListed() {
+  const all = await getCollection(
+    'projects',
+    (p) => (p.data.status === 'completed' || p.data.status === 'in-progress') && !p.data.hidden,
+  );
   return all.sort((a, b) => a.data.order - b.data.order);
 }
 
-export async function projectPaths(status: 'completed' | 'in-progress', base: string) {
-  const list = await getProjects(status);
+export async function projectPaths(base: string) {
+  const list = await getListed();
   return list.map((project, i) => ({
     params: { slug: project.id },
     props: {

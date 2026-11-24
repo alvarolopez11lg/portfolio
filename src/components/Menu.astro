@@ -1,18 +1,16 @@
 ---
 // The menu in the top-left corner. Projects are listed automatically
 // from src/content/projects, sorted by their `order` field.
-import { getCollection } from 'astro:content';
+import { getListed } from '../lib/projects';
 
 const path = Astro.url.pathname.replace(/\/$/, '') || '/';
 const isAt = (href: string) => path === href;
 const isIn = (base: string) => path === base || path.startsWith(base + '/');
 
-const all = (await getCollection('projects')).sort((a, b) => a.data.order - b.data.order);
-const completed = all.filter((p) => p.data.status === 'completed');
-const current = all.filter((p) => p.data.status === 'in-progress');
+const listed = await getListed();
 
 // On a single project page, phones hide the project list so the content comes first.
-const onDetail = /^\/(projects|current)\/[^/]+$/.test(path);
+const onDetail = /^\/projects\/[^/]+$/.test(path);
 ---
 
 <nav class="menu" aria-label="Main" data-detail={onDetail ? '' : undefined} transition:animate="none">
@@ -28,10 +26,11 @@ const onDetail = /^\/(projects|current)\/[^/]+$/.test(path);
       {
         isIn('/projects') && (
           <ul class="list sub">
-            {completed.map((p) => (
+            {listed.map((p) => (
               <li>
                 <a class="item" data-id={p.id} href={`/projects/${p.id}`} aria-current={isAt(`/projects/${p.id}`) ? 'page' : undefined}>
                   {p.data.title}
+                  {p.data.status === 'in-progress' && <span class="tag">in progress</span>}
                 </a>
               </li>
             ))}
@@ -96,6 +95,13 @@ const onDetail = /^\/(projects|current)\/[^/]+$/.test(path);
     transition:
       opacity 0.15s ease,
       transform 0.15s ease;
+  }
+
+  .tag {
+    margin-left: 0.6em;
+    font-size: 0.75rem;
+    letter-spacing: 0.04em;
+    color: var(--muted);
   }
 
   .item:hover,

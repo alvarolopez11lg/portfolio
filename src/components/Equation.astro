@@ -1,0 +1,52 @@
+---
+// A typeset equation for project write-ups (.mdx files).
+// Usage: <Equation label="What it is" tex="I = \frac{V}{R}" where="V = voltage, R = resistance" />
+import katex from 'katex';
+import 'katex/dist/katex.min.css';
+
+interface Props {
+  tex: string;
+  label?: string;
+  where?: string;
+}
+
+const { tex, label, where } = Astro.props;
+const html = katex.renderToString(tex, { displayMode: true, throwOnError: true, output: 'htmlAndMathml' });
+---
+
+<div class="eq">
+  {label && <p class="label">{label}</p>}
+  <div class="math" set:html={html} />
+  {where && <p class="where">{where}</p>}
+</div>
+
+<style>
+  .eq {
+    margin: 4px 0;
+    padding: 4px 0 4px 20px;
+    border-left: 2px solid var(--accent);
+  }
+
+  .label,
+  .where {
+    font-size: 0.87rem;
+    color: var(--muted);
+  }
+
+  .math {
+    overflow-x: auto;
+    overflow-y: hidden;
+  }
+
+  .math :global(.katex-display) {
+    margin: 10px 0;
+  }
+
+  .math :global(.katex-display > .katex) {
+    text-align: left;
+  }
+
+  .math :global(.katex) {
+    font-size: 1.15em;
+  }
+</style>
