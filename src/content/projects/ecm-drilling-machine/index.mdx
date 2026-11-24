@@ -9,40 +9,56 @@ tools: [Fusion 360, ESP32, NEMA 17 stepper, 3D printing]
 cover: ./images/machine-top.jpg
 coverAlt: Top view of the assembled machine inside a 5-gallon bucket, with the Z axis, slotted platform, exhaust fan, tubing and flow-control valve.
 gallery:
-  - src: ./images/cad-assembly.png
-    alt: Fusion 360 assembly of the base plate, Z-axis mount, tool holder, slotted workpiece platform and nozzle.
-    caption: Fusion 360 assembly of the platform, Z-axis mount, tool and nozzle.
-  - src: ./images/early-build.jpg
-    alt: Early build inside the bucket, with the Z axis, copper tool and aluminum coupon on the platform.
-    caption: Early build in the bucket.
   - src: ./images/nozzle-final-section.png
     alt: Section view of the final nozzle, with a barbed inlet and a converging outlet.
     caption: Final nozzle, section view. Iterated to give a smooth, consistent flow of electrolytic solution into the tool and workpiece gap without excessive splashing.
   - src: ./images/nozzle-early-section.png
-    alt: Section view of the earlier flat slit nozzle with two mounting ears.
-    caption: Earlier flat slit nozzle, section view.
+    alt: Section view of the same nozzle from a second angle, showing the slit outlet and two mounting ears.
+    caption: The same nozzle, sectioned from a second angle.
+  - src: ./images/early-build.jpg
+    alt: Early build inside the bucket, with the Z axis, copper tool and aluminum coupon on the platform.
+    caption: Early build in the bucket.
+  - src: ./images/assembled.jpg
+    alt: The machine assembled in the bucket, with the exhaust fan, pump line, flow-control valve and Z axis.
+    caption: Assembled, with the pump line, flow-control valve and exhaust fan.
 ---
 
 import Equation from '../../../components/Equation.astro';
 import Diagram from '../../../components/Diagram.astro';
 import blockDiagram from './images/block-diagram.png';
 import fluidicDiagram from './images/fluidic-diagram.png';
+import cadAssembly from './images/cad-assembly.png';
 
 ## What is ECM?
 
-Electrochemical machining (ECM) removes metal by dissolving it instead of cutting it. The part is the anode, the shaped tool is the cathode, and an electrolytic solution flows through the small gap between them. The solution carries the current that drives the dissolution, so its composition, concentration and flow control how fast and how evenly the metal dissolves. It also flushes away the dissolved metal, gas and heat.
+Electrochemical machining (ECM) is a non-traditional process that removes metal by controlled anodic dissolution rather than by mechanical cutting. The workpiece is connected as the anode (+) and a shaped tool electrode as the cathode (−). A low-voltage, high-current DC supply drives current across a narrow gap filled with a flowing electrolytic solution, and the geometry of the tool is progressively reproduced in the workpiece.
 
-The tool never touches the part, so it doesn't wear, and the result has no burrs or heat damage no matter how hard the metal is. Industry uses ECM for jet engine turbine blades and cooling holes, fuel injector parts, medical implants and deburring.
+The electrolytic solution is the medium in which the process takes place, not only a coolant. In a sodium chloride (NaCl) solution, dissociated ions carry the current across the gap. At the anode, metal atoms release electrons and enter the solution as ions. At the cathode, water is reduced and hydrogen gas is released, so the tool itself is not consumed. The dissolved metal then combines with hydroxide ions to form an insoluble hydroxide sludge, which the electrolyte flow removes from the gap together with the gas and heat. For an aluminum workpiece:
+
+<Equation
+  label="Electrode reactions (aluminum workpiece, NaCl electrolyte)"
+  tex={String.raw`\begin{aligned} \text{Anode:}\quad & \mathrm{Al} \rightarrow \mathrm{Al^{3+}} + 3e^- \\ \text{Cathode:}\quad & \mathrm{2H_2O} + 2e^- \rightarrow \mathrm{H_2} + \mathrm{2OH^-} \\ \text{In solution:}\quad & \mathrm{Al^{3+}} + \mathrm{3OH^-} \rightarrow \mathrm{Al(OH)_3} \end{aligned}`}
+/>
+
+Because metal is removed atom by atom, the removal rate is governed by the electrical charge passed (Faraday's law), not by the hardness, strength or toughness of the material. Typical operating conditions are 8 to 30 V, current densities of 10 to 100 A/cm², a machining gap of about 0.1 mm and tool feed rates of 0.1 to 20 mm/min. Since there is no contact and no cutting force, the machined surface is free of burrs, residual stress and heat-affected zones. This makes ECM well suited to difficult-to-machine alloys such as titanium, nickel superalloys and tungsten carbide.
+
+Industrial applications include turbine and compressor blades, die sinking, deburring of gears and fuel-system components, electrochemical broaching, and drilling of complex or offset holes. The principal limitations are the difficulty of holding tight tolerances, the corrosive electrolyte, sludge disposal and a high specific energy of 200 to 600 J/mm³.
 
 ## Goal
 
 Design and build a single-axis electrochemical machine that drills holes in aluminum: a 1/8" hole through 1/8" aluminum 6061, built safely around the electrolytic solution, hydrogen gas and a DC power supply. We're a team of three, and I lead the mechanical design.
 
+<Diagram
+  src={cadAssembly}
+  alt="Fusion 360 assembly of the base plate, Z-axis mount, tool holder, slotted workpiece platform and nozzle."
+  caption="Fusion 360 assembly of the platform, Z-axis mount, tool and nozzle."
+/>
+
 ## Solution
 
 - **Structure:** a 5-gallon bucket is the frame, reservoir and splash enclosure. 3D-printed brackets hold the Z axis and a slotted workpiece platform.
 - **Motion:** an aluminum Z-axis kit with a NEMA 17 stepper and a 4 mm lead screw, homed on limit switches. An ESP32 drives a constant, adjustable feed.
-- **Tool:** a 1/8" copper tube electrode, insulated with heat shrink so only the tip cuts.
+- **Tool:** a 1/8" copper tube electrode.
 - **Electrolyte:** a 12 V submersible pump pushes the electrolytic solution through a flow-control valve to a 3D-printed nozzle fixed at the workpiece. The solution drains through the platform back into the reservoir.
 - **Safety:** an E-stop cuts mains power to both supplies, every 12 V branch is fused, and a 12 V fan vents hydrogen from under the lid.
 
@@ -60,7 +76,7 @@ Design and build a single-axis electrochemical machine that drills holes in alum
   where="V = volume removed, t = cut time, η = current efficiency"
 />
 
-That sets the first wet runs at 8 to 12 V with a 3.5 A current limit, an over-current trip at about 1.5 times the cutting current, and a 6 A inline fuse, all on a 0 to 30 V, 10 A bench supply. The pump needs about 1 L/min against roughly 0.34 m of head (about 3.6 kPa). Its maximum pressure of 52 kPa is well under the tubing's 35 psi rating.
+That sets the first wet runs at 8 to 12 V with a 3.5 A current limit, an over-current trip at about 1.5 times the cutting current, and a 6 A inline fuse, all on a 0 to 30 V, 10 A bench supply.
 
 ## Diagrams
 
@@ -75,5 +91,5 @@ That sets the first wet runs at 8 to 12 V with a 3.5 A current limit, an over-cu
   src={fluidicDiagram}
   full="/projects/ecm-drilling-machine/fluidic-diagram.png"
   alt="Fluidic diagram (P&ID) of the bucket: pump, flow-control valve, nozzle, tool, coupon, slotted platform, return filter, reservoir, vents and exhaust fan, with operating condition tables."
-  caption="Fluidic diagram, P&ID (Week 2 design review). The nozzle shown is the earlier flat slit design."
+  caption="Fluidic diagram, P&ID (Week 2 design review)."
 />
