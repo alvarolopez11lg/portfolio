@@ -1,0 +1,40 @@
+---
+// Privacy policy for Pigeon (desk thermal printer). Not linked from the menu.
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout title="Pigeon Privacy Policy" description="Privacy policy for Pigeon, a personal desk printer project by Alvaro Lopez Guerra.">
+  <article class="policy">
+    <h1>Pigeon Privacy Policy</h1>
+    <p class="muted">Last updated: November 24, 2026</p>
+    <p>
+      Pigeon is a personal project used only by its developer, Alvaro Lopez Guerra. It requests read-only access to my
+      own Google Calendar and Google Tasks to print a daily summary on a desk printer. Calendar and task data is used
+      only for that printout and is not stored elsewhere, shared, or sold.
+    </p>
+    <p>Contact: <a href="mailto:alvarolopez11lg@gmail.com">alvarolopez11lg@gmail.com</a></p>
+  </article>
+</Layout>
+
+<style>
+  .policy {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    max-width: 62ch;
+  }
+
+  h1 {
+    font-size: 1.4rem;
+    font-weight: 500;
+    line-height: 1.3;
+  }
+
+  a {
+    border-bottom: 1px solid currentColor;
+  }
+
+  a:hover {
+    color: var(--accent);
+  }
+</style>
